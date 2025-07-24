@@ -1,3 +1,6 @@
+#Database Files
+*.odb
+
 # Logs
 logs
 *.log
