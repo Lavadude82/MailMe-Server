@@ -1,0 +1,11 @@
+{
+    "whitelist":{
+        "enabled":false,
+        "list":[
+            "localhost",
+            "127.0.0.1"
+        ]
+    },
+    "https":false,
+    "port":"2136"
+}
