@@ -27,11 +27,15 @@ function warn(data) {
 }
 
 function log(data) {
-  console.log(clicolor.white(clicolor.bold("[#] ") + data + ` - ${timestamp()}`));
+  console.log(
+    clicolor.white(clicolor.bold("[#] ") + data + ` - ${timestamp()}`)
+  );
 }
 
 function yay(data) {
-  console.log(clicolor.green(clicolor.bold("[+] ") + data + ` - ${timestamp()}`));
+  console.log(
+    clicolor.green(clicolor.bold("[+] ") + data + ` - ${timestamp()}`)
+  );
 }
 
 module.exports = {

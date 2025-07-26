@@ -2,7 +2,10 @@ const cli = require("./cli_log.js");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const db_config = require(path.join(__dirname, "../config/db.json"));
-const user_defaults_config = require(path.join(__dirname, "../config/user_defaults.json"));
+const user_defaults_config = require(path.join(
+  __dirname,
+  "../config/user_defaults.json"
+));
 const fs = require("fs");
 
 function init_db() {
@@ -74,14 +77,27 @@ function init_db() {
         error: { message: "Username or Email in Use", web_code: 1 },
       };
     }
-    if(password.length >= user_defaults_config.password.length.min && password.length <= user_defaults_config.password.length.max){
-        return {
-            status: 400,
-            error: { message: "Password too Short or Long", web_code: 7 },
-          };
+    if (
+      password.length >= user_defaults_config.password.length.min &&
+      password.length <= user_defaults_config.password.length.max
+    ) {
+      return {
+        status: 400,
+        error: { message: "Password too Short or Long", web_code: 7 },
+      };
     }
-    if(pfp === undefined){
-        pfp = "data:image/png;base64,"+fs.readFileSync(path.join(__dirname,"../resources/db_defaults",user_defaults_config.default_pfp)).toString("base64")
+    if (pfp === undefined) {
+      pfp =
+        "data:image/png;base64," +
+        fs
+          .readFileSync(
+            path.join(
+              __dirname,
+              "../resources/db_defaults",
+              user_defaults_config.default_pfp
+            )
+          )
+          .toString("base64");
     }
     let pw = bcrypt.hashSync(password, 10);
     let t = btoa(bcrypt.hashSync(pw + email + username, 5));
@@ -91,7 +107,7 @@ function init_db() {
       password: pw,
       name: name,
       token: t,
-      pfp:pfp
+      pfp: pfp,
     });
     cli.log("User Creation Succesful");
     return {
@@ -137,7 +153,7 @@ function init_db() {
       return {
         status: 200,
         success: { message: "Account Login Succesful", web_code: 2 },
-        data: { token: db_user.token, pfp:db_user.pfp},
+        data: { token: db_user.token, pfp: db_user.pfp },
       };
     }
   }
@@ -157,7 +173,7 @@ function init_db() {
     return {
       status: 200,
       success: { message: "User Fetch Succesful", web_code: 9 },
-      data:{username:db_user.username}
+      data: { username: db_user.username },
     };
   }
   return { save, createUser, deleteUser, loginUser };

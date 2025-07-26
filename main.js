@@ -41,7 +41,12 @@ app.post(
   body("password").isBase64(),
   body("pfp"),
   function (req, res) {
-    const results = db.createUser(btoa(req.body.email),btoa(req.body.password),btoa(req.body.username),req.body.pfp)
+    const results = db.createUser(
+      btoa(req.body.email),
+      btoa(req.body.password),
+      btoa(req.body.username),
+      req.body.pfp
+    );
   }
 );
 app.post("/user/delete", function (req, res) {});

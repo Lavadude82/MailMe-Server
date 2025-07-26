@@ -1,6 +1,11 @@
 #Database Files
 *.odb
 
+#keys
+codeberg*
+*_key*
+*_key.pub
+
 # Logs
 logs
 *.log
