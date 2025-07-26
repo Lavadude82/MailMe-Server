@@ -1,0 +1,9 @@
+{
+        "password":{
+            "length":{
+                "min":8,
+                "max":128
+            }
+        },
+        "default_pfp":"default_user.png"
+}

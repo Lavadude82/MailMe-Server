@@ -31,7 +31,7 @@ function log(data) {
 }
 
 function yay(data) {
-  console.log(clicolor.green(clicolor.bold("[#] ") + data + ` - ${timestamp()}`));
+  console.log(clicolor.green(clicolor.bold("[+] ") + data + ` - ${timestamp()}`));
 }
 
 module.exports = {
@@ -39,5 +39,5 @@ module.exports = {
   warn,
   log,
   yay,
-  clear: console.clear,
+  rm: console.clear,
 };
