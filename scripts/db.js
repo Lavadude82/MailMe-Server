@@ -54,36 +54,58 @@ function init_db() {
     );
     cli.yay("Database Loaded");
   }
+
   function save() {
     fs.writeFileSync(
       path.join(__dirname, "../data/", `${db_config.basename}0.odb`),
       JSON.stringify(memory_db)
     );
+    if (db_config.db_log) cli.log("Database Saved");
   }
 
   function createUser(email, password, username, name, pfp) {
     let userid = memory_db.users.find((user) => {
       return user.email === email;
     });
+
     if (userid == undefined) {
       userid = memory_db.users.find((user) => {
         return user.username === username;
       });
     }
     if (userid != undefined) {
-      cli.log("User Creation Failed");
+      if (db_config.db_log) cli.log("User Creation Failed");
       return {
         status: 400,
         error: { message: "Username or Email in Use", web_code: 1 },
       };
     }
+
+    let contains_digit = /\d/.test(password);
+    let contains_space = /\s/.test(password);
+    let contains_symbol = /[^a-zA-Z0-9\s]/.test(password);
     if (
-      password.length >= user_defaults_config.password.length.min &&
-      password.length <= user_defaults_config.password.length.max
+      (password.length >= user_defaults_config.password.length.min &&
+        password.length <= user_defaults_config.password.length.max &&
+        contains_space) ||
+      !contains_digit ||
+      !contains_symbol
     ) {
+      if (db_config.db_log) cli.log("User Creation Failed");
       return {
         status: 400,
-        error: { message: "Password too Short or Long", web_code: 7 },
+        error: {
+          message:
+            "Password Doesn't Meet Neccesary Criteria or Contains Illegal Characters",
+          web_code: 7,
+          sub_code: contains_space
+            ? 4
+            : !contains_digit
+            ? 3
+            : !contains_symbol
+            ? 2
+            : 0,
+        },
       };
     }
     if (pfp === undefined) {
@@ -109,7 +131,7 @@ function init_db() {
       token: t,
       pfp: pfp,
     });
-    cli.log("User Creation Succesful");
+    if (db_config.db_log) cli.log("User Creation Succesful");
     return {
       status: 200,
       success: { message: "Succesfully Created Account!", web_code: 4 },
@@ -121,7 +143,15 @@ function init_db() {
     let db_user = memory_db.users.find((user) => {
       return user.email === email;
     });
-    if (db_user == undefined) return cli.log("User Removal Failed");
+    if (db_user == undefined) {
+      if (db_config.db_log) {
+        cli.log("User Removal Failed");
+      }
+       return {
+        status: 400,
+        error: { message: "Account Doesn't Exist", web_code: 67 },
+      };;
+    }
     if (
       bcrypt.compareSync(password, db_user.password) &&
       token === db_user.token
@@ -130,9 +160,10 @@ function init_db() {
         return user.email === email;
       });
       memory_db.users.splice(userid, 1);
-      return cli.log("User Removal Succesful");
+      if (db_config.db_log) cli.log("User Removal Succesful");
+      return;
     }
-    cli.log("User Removal Failed");
+    if (db_config.db_log) cli.log("User Creation Failed");
   }
 
   function loginUser(username, password) {
@@ -140,7 +171,7 @@ function init_db() {
       return user.username === username;
     });
     if (db_user == undefined) {
-      cli.log("User login Failed");
+      if (db_config.db_log) cli.log("User login Failed");
       return {
         status: 400,
         error: { message: "Account Doesn't Exist", web_code: 4 },
@@ -163,7 +194,7 @@ function init_db() {
       return user.token === token;
     });
     if (db_user == undefined) {
-      cli.log("User Fetch Failed");
+      if (db_config.db_log) cli.log("User Fetch Failed");
       return {
         status: 400,
         error: { message: "Account Doesn't Exist", web_code: 4 },
@@ -176,7 +207,7 @@ function init_db() {
       data: { username: db_user.username },
     };
   }
-  return { save, createUser, deleteUser, loginUser };
+  return { save, createUser, deleteUser, loginUser, fetchUser };
 }
 
 module.exports = {

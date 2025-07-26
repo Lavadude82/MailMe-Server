@@ -1,6 +1,6 @@
 #Database Files
 *.odb
-
+*dev.odb
 #keys
 codeberg*
 *_key*
